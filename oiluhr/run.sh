@@ -1,6 +1,3 @@
-#!/usr/bin/with-contenv bash
-set -e
-
-echo "OilMeter OCR Add-on gestartet."
-
-python3 /ocr.py
+#!/usr/bin/env bash
+echo "OilUhr Add-on gestartet"
+python3 /app/main.py

@@ -1,0 +1,18 @@
+{
+  "name": "OilMeter OCR",
+  "version": "1.0.0",
+  "slug": "oilmeter_ocr",
+  "description": "Liest den Zählerstand der Öluhr über ESP32-CAM aus und importiert ihn nach Home Assistant.",
+  "arch": ["aarch64", "amd64", "armv7"],
+  "startup": "services",
+  "boot": "auto",
+  "host_network": true,
+  "options": {
+    "esp_ip": "192.168.1.45",
+    "poll_interval": 10
+  },
+  "schema": {
+    "esp_ip": "str",
+    "poll_interval": "int"
+  }
+}

@@ -1,0 +1,14 @@
+name: "Oil Uhr"
+version: "1.0.0"
+slug: "oiluhr"
+description: "Liest Zählerstände/Uhr-Werte aus Kamera und stellt API bereit."
+startup: services
+boot: auto
+ports:
+  8099/tcp: 8099
+map:
+  - config:rw
+options:
+  debug: false
+schema:
+  debug: bool

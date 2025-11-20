@@ -1,7 +1,7 @@
 name: "OilUhr OCR"
 version: "1.0.1"
 slug: "oiluhr_ocr"
-description: "Liest automatisch den Zählerstand deiner Öluhr per ESP32-CAM aus und stellt ihn als Sensor in Home Assistant bereit."
+description: "Liest Zählerstand der Öluhr per ESP32-CAM aus"
 arch:
   - aarch64
   - amd64
@@ -27,4 +27,3 @@ schema:
   roi_w: int(10,2000)
   roi_h: int(10,2000)
   debug: bool
-image: ghcr.io/home-assistant/{arch}-addon-oiluhr

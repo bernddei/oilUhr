@@ -2,6 +2,7 @@ ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
 FROM ${BUILD_FROM}
 
 # Installiere Systemabhängigkeiten: OCR, JPEG und die notwendigen Build-Tools
+# (Dieser Schritt ist im Cache)
 RUN apk add --no-cache \
     python3 \
     py3-pip \
@@ -9,17 +10,17 @@ RUN apk add --no-cache \
     tesseract-ocr-data-deu \
     jpeg-dev \
     zlib-dev \
-    # Diese Pakete sind entscheidend, um OpenCV erfolgreich zu kompilieren:
     build-base \
     cmake \
     git \
     linux-headers
 
-# Installiere Python-Abhängigkeiten. 
-# Wichtig: Zuerst setuptools/wheel aktualisieren, um den 'bdist_wheel' Fehler zu vermeiden.
+# Installiere Python-Build-Abhängigkeiten
 RUN pip3 install --no-cache-dir --break-system-packages \
-        setuptools wheel pip \
-        && pip3 install --no-cache-dir --break-system-packages \
+        setuptools wheel pip
+
+# Installiere OCR/CV Abhängigkeiten mit Versions-Pinning für OpenCV
+RUN pip3 install --no-cache-dir --break-system-packages \
         requests \
         numpy \
         pytesseract \

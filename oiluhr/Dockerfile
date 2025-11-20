@@ -1,7 +1,7 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
 FROM ${BUILD_FROM}
 
-# Installiere Systemabhängigkeiten, die für OpenCV/Tesseract benötigt werden
+# Installiere Systemabhängigkeiten: OCR, JPEG und die notwendigen Build-Tools
 RUN apk add --no-cache \
     python3 \
     py3-pip \
@@ -9,15 +9,14 @@ RUN apk add --no-cache \
     tesseract-ocr-data-deu \
     jpeg-dev \
     zlib-dev \
-    # Zusätzliche Build-Abhängigkeiten zur Fehlerbehebung
+    # Diese Pakete sind entscheidend, um OpenCV erfolgreich zu kompilieren:
     build-base \
     cmake \
     git \
     linux-headers
 
-# Installiere Python-Abhängigkeiten. WICHTIG:
-# 1. setuptools wird zuerst aktualisiert, um den 'bdist_wheel' Fehler zu beheben.
-# 2. opencv-python-headless ist der Hauptverursacher und wird als letztes installiert.
+# Installiere Python-Abhängigkeiten. 
+# Wichtig: Zuerst setuptools/wheel aktualisieren, um den 'bdist_wheel' Fehler zu vermeiden.
 RUN pip3 install --no-cache-dir --break-system-packages \
         setuptools wheel pip \
         && pip3 install --no-cache-dir --break-system-packages \

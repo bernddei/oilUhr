@@ -23,7 +23,7 @@ RUN pip3 install --no-cache-dir --break-system-packages \
         requests \
         numpy \
         pytesseract \
-        opencv-python-headless
+        opencv-python-headless==4.9.0.80
 
 WORKDIR /app
 COPY run.sh /app/run.sh

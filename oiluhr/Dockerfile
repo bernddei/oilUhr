@@ -1,10 +1,26 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:latest
-FROM $BUILD_FROM
+ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
+FROM ${BUILD_FROM}
+
+# Install system dependencies
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    tesseract-ocr \
+    tesseract-ocr-data-deu \
+    jpeg-dev \
+    zlib-dev \
+    && pip3 install --no-cache-dir --break-system-packages \
+        requests \
+        numpy \
+        pytesseract \
+        opencv-python-headless \
+        flask
 
 WORKDIR /app
 
 COPY run.sh /app/run.sh
 COPY main.py /app/main.py
-RUN chmod +x /app/run.sh
+
+RUN chmod a+x /app/run.sh
 
 CMD [ "/app/run.sh" ]

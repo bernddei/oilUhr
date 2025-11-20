@@ -12,7 +12,7 @@ host_network: true
 map:
   - config:rw
 options:
-  esp_ip: "192.168.1.45"
+  esp_ip: "192.168.178.82"
   poll_interval: 10
   roi_x: 180
   roi_y: 362

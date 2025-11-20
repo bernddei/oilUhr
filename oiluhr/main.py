@@ -22,6 +22,9 @@ def load_options():
             "roi_y": 362,
             "roi_w": 293,
             "roi_h": 73,
+            "rotation": 0,
+            "horizontal_mirror": False,
+            "vertical_flip": False,
             "debug": False
         }
 
@@ -33,6 +36,9 @@ ROI_X = int(opts["roi_x"])
 ROI_Y = int(opts["roi_y"])
 ROI_W = int(opts["roi_w"])
 ROI_H = int(opts["roi_h"])
+ROTATION = int(opts.get("rotation", 0))
+H_MIRROR = bool(opts.get("horizontal_mirror", False))
+V_FLIP = bool(opts.get("vertical_flip", False))
 DEBUG = bool(opts.get("debug", False))
 
 CAPTURE_URL = f"http://{ESP_IP}/capture"
@@ -40,19 +46,6 @@ HA_API_URL = "http://supervisor/core/api"
 
 def log(msg, level="INFO"):
     print(f"[{level}] {msg}")
-
-def get_ha_state(entity_id):
-    """Hole State eines Entities von Home Assistant"""
-    try:
-        token = os.environ.get("SUPERVISOR_TOKEN", "")
-        url = f"{HA_API_URL}/states/{entity_id}"
-        headers = {"Authorization": f"Bearer {token}"}
-        r = requests.get(url, headers=headers, timeout=3)
-        if r.status_code == 200:
-            return r.json().get("state")
-        return None
-    except:
-        return None
 
 def fetch_image():
     try:
@@ -70,27 +63,22 @@ def fetch_image():
 def transform_image(img):
     """Wende Rotation und Spiegelung an"""
     try:
-        # Hole Einstellungen von HA
-        rotation = get_ha_state("select.bild_rotation")
-        h_mirror = get_ha_state("switch.horizontal_spiegeln")
-        v_flip = get_ha_state("switch.vertikal_spiegeln")
-        
         if DEBUG:
-            log(f"Transformation: Rotation={rotation}, H-Mirror={h_mirror}, V-Flip={v_flip}")
+            log(f"Transformation: Rotation={ROTATION}, H-Mirror={H_MIRROR}, V-Flip={V_FLIP}")
         
-        # Rotation anwenden
-        if rotation == "90":
+        # Rotation
+        if ROTATION == 90:
             img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
-        elif rotation == "180":
+        elif ROTATION == 180:
             img = cv2.rotate(img, cv2.ROTATE_180)
-        elif rotation == "270":
+        elif ROTATION == 270:
             img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
         
-        # Spiegelung anwenden
-        if h_mirror == "on":
-            img = cv2.flip(img, 1)  # Horizontal flip
-        if v_flip == "on":
-            img = cv2.flip(img, 0)  # Vertical flip
+        # Spiegelung
+        if H_MIRROR:
+            img = cv2.flip(img, 1)
+        if V_FLIP:
+            img = cv2.flip(img, 0)
             
         return img
     except Exception as e:
@@ -189,6 +177,8 @@ def main():
     log(f"ESP32-CAM: {ESP_IP}")
     log(f"Poll-Intervall: {POLL_INTERVAL}s")
     log(f"ROI: x={ROI_X}, y={ROI_Y}, w={ROI_W}, h={ROI_H}")
+    log(f"Rotation: {ROTATION}°")
+    log(f"H-Mirror: {H_MIRROR}, V-Flip: {V_FLIP}")
     log(f"Debug: {DEBUG}")
     
     while True:
@@ -198,9 +188,7 @@ def main():
             if img is None:
                 log("Kein Bild empfangen", "WARN")
             else:
-                # Bild transformieren (Rotation & Spiegelung)
                 img = transform_image(img)
-                
                 value, raw = preprocess_and_ocr(img)
                 
                 if value is not None:

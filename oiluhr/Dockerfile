@@ -1,8 +1,8 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
-FROM ${BUILD_FROM}
+# ...
+# [1/7] FROM ghcr.io/home-assistant/aarch64-base:latest
+# ...
 
-# Installiere Systemabhängigkeiten: OCR, JPEG und die notwendigen Build-Tools
-# (Dieser Schritt ist im Cache)
+# [2/7] RUN apk add ...
 RUN apk add --no-cache \
     python3 \
     py3-pip \
@@ -13,21 +13,16 @@ RUN apk add --no-cache \
     build-base \
     cmake \
     git \
-    linux-headers
+    linux-headers # <<< NEU: Kommentar hier einfügen, um Cache zu brechen.
 
-# Installiere Python-Build-Abhängigkeiten
+# [3/7] RUN pip3 install setuptools wheel pip
 RUN pip3 install --no-cache-dir --break-system-packages \
         setuptools wheel pip
 
-# Installiere OCR/CV Abhängigkeiten mit Versions-Pinning für OpenCV
+# [4/7] RUN pip3 install requests numpy pytesseract opencv-python-headless==4.9.0.80
 RUN pip3 install --no-cache-dir --break-system-packages \
         requests \
         numpy \
         pytesseract \
         opencv-python-headless==4.9.0.80
-
-WORKDIR /app
-COPY run.sh /app/run.sh
-COPY main.py /app/main.py
-RUN chmod a+x /app/run.sh
-CMD [ "/app/run.sh" ]
+# ...

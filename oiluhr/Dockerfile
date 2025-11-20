@@ -1,7 +1,6 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
 FROM ${BUILD_FROM}
 
-# Install system dependencies
 RUN apk add --no-cache \
     python3 \
     py3-pip \
@@ -13,8 +12,7 @@ RUN apk add --no-cache \
         requests \
         numpy \
         pytesseract \
-        opencv-python-headless \
-        flask
+        opencv-python-headless
 
 WORKDIR /app
 

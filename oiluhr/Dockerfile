@@ -1,12 +1,11 @@
 # ----------------------------------------------------------------------
-# Basis-Image-Definition
-# Pinned Base Image (Python 3.11) zur Umgehung des numpy/pkgutil-Fehlers in Python 3.12.
+# Multi-Arch Base Image mit Python Support
 # ----------------------------------------------------------------------
-FROM ghcr.io/home-assistant/aarch64-base:2024.05.0
+ARG BUILD_FROM
+FROM $BUILD_FROM
 
 # ----------------------------------------------------------------------
 # SCHRITT 1: Systemabhängigkeiten installieren
-# Erforderlich für Tesseract, OpenCV-Kompilierung (build-base, cmake, git etc.)
 # ----------------------------------------------------------------------
 RUN apk add --no-cache \
     python3 \
@@ -18,14 +17,11 @@ RUN apk add --no-cache \
     build-base \
     cmake \
     git \
-    linux-headers
+    linux-headers \
+    bash
 
 # ----------------------------------------------------------------------
-# SCHRITT 2: Python-Pakete installieren (Hauptfix für den Build)
-# Die Installation ist in einem Befehl verkettet:
-# 1. Installation des "scikit-build" Fixes (>0.17.6).
-# 2. Installation der Hauptpakete (requests, numpy, pytesseract) und
-#    der gepinnten OpenCV-Version (4.9.0.80).
+# SCHRITT 2: Python-Pakete installieren
 # ----------------------------------------------------------------------
 RUN pip3 install --no-cache-dir --break-system-packages \
     setuptools wheel pip 'scikit-build>=0.17.6' \
@@ -39,4 +35,5 @@ WORKDIR /app
 COPY run.sh /app/run.sh
 COPY main.py /app/main.py
 RUN chmod a+x /app/run.sh
+
 CMD [ "/app/run.sh" ]

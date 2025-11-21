@@ -1,5 +1,5 @@
 name: "OilUhr OCR"
-version: "1.0.5"
+version: "1.0.6"
 slug: "oiluhr_ocr"
 description: "Liest Zählerstand der Öluhr per ESP32-CAM aus"
 arch:
